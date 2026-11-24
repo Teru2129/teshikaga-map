@@ -109,8 +109,10 @@
 
     /* マップ＆詳細パネルのグリッド */
     .map-grid {
+      max-width: 1200px;
+      margin: 0 auto;
       display: grid;
-      grid-template-columns: 1.35fr 1fr;
+      grid-template-columns: 1.8fr 1fr;
       gap: 1.25rem;
       align-items: stretch;
     }
@@ -135,7 +137,7 @@
       background: #e9efe6;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: center;
     }
 
     .map-hint {
@@ -148,32 +150,177 @@
       align-items: center;
     }
 
-    svg#teshikaga-map {
+    /* ジオラマ風3Dマップ */
+    .map3d-scene {
+      perspective: 1400px;
+      padding: 6px 4px 14px;
+    }
+
+    .map3d {
+      position: relative;
+      border-radius: 14px;
+      transform-style: preserve-3d;
+      transform: rotateX(var(--rx, 12deg)) rotateY(var(--ry, 0deg));
+      transition: transform 0.25s ease-out;
+      box-shadow: 0 30px 40px -18px rgba(29, 53, 42, 0.55), 0 8px 14px rgba(29, 53, 42, 0.18);
+    }
+
+    .map3d img {
+      display: block;
       width: 100%;
       height: auto;
-      display: block;
-      border-radius: 12px;
-      background: #dce8d5;
-      border: 2px solid #c5d6bc;
+      border-radius: 14px;
     }
 
-    /* SVGピン操作 */
+    .map3d::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 14px;
+      pointer-events: none;
+      background: linear-gradient(160deg, rgba(255,255,255,0.18), rgba(255,255,255,0) 40%, rgba(0,0,0,0.12));
+    }
+
+    .map3d .route {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      transform: translateZ(8px);
+    }
+
+    .route path {
+      fill: none;
+      stroke: #fff4e6;
+      stroke-width: 5;
+      stroke-dasharray: 12 10;
+      stroke-linecap: round;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,0.45));
+      animation: busflow 1.2s linear infinite;
+    }
+
+    @keyframes busflow {
+      to { stroke-dashoffset: -22; }
+    }
+
+    /* 浮かぶピン */
     .map-pin {
+      position: absolute;
+      transform: translate(-50%, -100%) translateZ(40px);
+      transform-style: preserve-3d;
+      background: none;
+      border: none;
+      padding: 0;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: inherit;
     }
 
-    .map-pin:hover .pin-circle {
-      stroke-width: 4;
+    .pin-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: float 2.6s ease-in-out infinite;
+      transition: transform 0.25s ease;
     }
 
-    .map-pin.active .pin-pulse {
-      animation: pulse 1.6s infinite;
+    .map-pin:nth-child(3) .pin-body { animation-delay: -0.6s; }
+    .map-pin:nth-child(4) .pin-body { animation-delay: -1.3s; }
+    .map-pin:nth-child(5) .pin-body { animation-delay: -1.9s; }
+
+    @keyframes float {
+      0%, 100% { translate: 0 0; }
+      50% { translate: 0 -8px; }
     }
 
-    @keyframes pulse {
-      0% { r: 16; opacity: 0.8; }
-      100% { r: 30; opacity: 0; }
+    .pin-head {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--forest-dark);
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.05rem;
+      display: grid;
+      place-items: center;
+      border: 3px solid #fff;
+      box-shadow: 0 6px 10px rgba(0,0,0,0.35);
+    }
+
+    .map-pin.oshi .pin-head {
+      background: var(--earth-orange);
+    }
+
+    .pin-stem {
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 12px solid #fff;
+      margin-top: -2px;
+    }
+
+    .pin-label {
+      position: absolute;
+      bottom: 100%;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      background: rgba(255,255,255,0.94);
+      color: var(--forest-dark);
+      font-size: 0.78rem;
+      font-weight: bold;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    }
+
+    .map-pin.oshi .pin-label::before {
+      content: "★ ";
+      color: var(--earth-orange);
+    }
+
+    .pin-shadow {
+      width: 26px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.35);
+      filter: blur(2px);
+      margin-top: 2px;
+      animation: shadow 2.6s ease-in-out infinite;
+    }
+
+    .map-pin:nth-child(3) .pin-shadow { animation-delay: -0.6s; }
+    .map-pin:nth-child(4) .pin-shadow { animation-delay: -1.3s; }
+    .map-pin:nth-child(5) .pin-shadow { animation-delay: -1.9s; }
+
+    @keyframes shadow {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(0.7); opacity: 0.45; }
+    }
+
+    .map-pin:hover .pin-body,
+    .map-pin.active .pin-body {
+      transform: scale(1.22);
+    }
+
+    .map-pin.active .pin-head {
+      box-shadow: 0 0 0 6px rgba(255,255,255,0.55), 0 10px 16px rgba(0,0,0,0.4);
+    }
+
+    @media (max-width: 600px) {
+      .map3d-scene { padding-top: 34px; }
+      .pin-head { width: 26px; height: 26px; font-size: 0.8rem; border-width: 2px; }
+      .pin-stem { border-left-width: 5px; border-right-width: 5px; border-top-width: 8px; }
+      .pin-label { font-size: 0.62rem; padding: 0.1rem 0.4rem; margin-bottom: 3px; }
+      .map-pin:not(.active) .pin-label { display: none; }
+      .map-pin:hover .pin-body, .map-pin.active .pin-body { transform: scale(1.1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pin-body, .pin-shadow, .route path { animation: none; }
     }
 
     /* スポット詳細パネル */
@@ -481,102 +628,37 @@
   <main>
     <!-- マップ＆詳細セクション -->
     <div class="map-grid">
-      <!-- イラスト風SVGマップ -->
+      <!-- ジオラマ風3Dマップ -->
       <div class="card map-wrapper">
         <div class="map-hint">
           <span>📍 マップのピンをタップして詳細をチェック！</span>
           <span>🚌 点線＝バスルート</span>
         </div>
 
-        <svg id="teshikaga-map" viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="弟子屈町 観光イラストマップ">
-          <!-- 背景の地形・森 -->
-          <path d="M0,0 H600 V420 H0 Z" fill="#dce8d5" />
-          <!-- 等高線風の丘 -->
-          <path d="M-20,340 Q150,270 300,330 T620,310 V420 H-20 Z" fill="#cedfc4" />
-          <path d="M360,20 Q470,0 590,60 T620,250 Q500,260 420,210 Z" fill="#c5d9ba" />
-
-          <!-- 木のイラスト（装飾） -->
-          <g fill="#5b8266" opacity="0.75">
-            <polygon points="70,90 60,115 80,115" />
-            <polygon points="90,105 82,125 98,125" />
-            <polygon points="270,320 260,345 280,345" />
-            <polygon points="290,335 282,355 298,355" />
-            <polygon points="530,310 520,335 540,335" />
-            <polygon points="550,295 540,320 560,320" />
-            <polygon points="410,60 402,80 418,80" />
-          </g>
-
-          <!-- 屈斜路湖（西側・大きなカルデラ湖） -->
-          <path d="M75,180 C65,130 130,110 185,135 C225,155 230,220 205,265 C180,305 110,300 85,255 C70,230 80,205 75,180 Z" fill="#5da9e9" stroke="#3b82c4" stroke-width="3" />
-          <!-- 中島 -->
-          <ellipse cx="148" cy="205" rx="22" ry="15" fill="#7aa67e" />
-          <text x="148" y="242" text-anchor="middle" font-size="13" font-weight="bold" fill="#184e77">屈斜路湖</text>
-
-          <!-- 摩周湖（東側・深いブルー） -->
-          <path d="M445,145 C460,105 525,105 545,145 C560,180 545,235 505,245 C465,255 435,215 445,145 Z" fill="#1d4e89" stroke="#13315c" stroke-width="3" />
-          <!-- カムイシュ島 -->
-          <circle cx="502" cy="178" r="5" fill="#8fb392" />
-          <text x="498" y="210" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">摩周湖</text>
-
-          <!-- 硫黄山（中央やや北・岩山と噴煙） -->
-          <polygon points="265,200 305,130 345,200" fill="#a89f91" stroke="#7d7468" stroke-width="2" />
-          <polygon points="292,153 305,130 318,153 308,148 302,154" fill="#e6c229" />
-          <!-- 噴煙 -->
-          <g fill="#ffffff" opacity="0.85">
-            <circle cx="308" cy="118" r="7" />
-            <circle cx="318" cy="108" r="10" />
-            <circle cx="332" cy="100" r="12" />
-          </g>
-          <text x="305" y="218" text-anchor="middle" font-size="12" font-weight="bold" fill="#4a443c">硫黄山</text>
-
-          <!-- 川湯温泉（硫黄山の北東・温泉マーク風） -->
-          <rect x="335" y="72" width="68" height="32" rx="10" fill="#f7e3c6" stroke="#d96b27" stroke-width="2" />
-          <text x="369" y="93" text-anchor="middle" font-size="12" font-weight="bold" fill="#b34d12">♨ 川湯温泉</text>
-
-          <!-- 貸切バスルート（点線） -->
-          <path d="M465,235 Q390,260 325,195 T360,104 Q270,95 205,255"
-                fill="none" stroke="#d96b27" stroke-width="4" stroke-dasharray="8,6" stroke-linecap="round" />
-
-          <!-- ピン1：摩周湖（推し） -->
-          <g class="map-pin active" data-id="0" transform="translate(465, 235)">
-            <circle class="pin-pulse" cx="0" cy="0" r="16" fill="#d96b27" opacity="0.5" />
-            <circle class="pin-circle" cx="0" cy="0" r="16" fill="#d96b27" stroke="#ffffff" stroke-width="3" />
-            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">1</text>
-            <rect x="-26" y="-36" width="52" height="17" rx="8" fill="#1d352a" />
-            <text x="0" y="-24" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffd166">★推し</text>
-          </g>
-
-          <!-- ピン2：硫黄山 -->
-          <g class="map-pin" data-id="1" transform="translate(320, 188)">
-            <circle class="pin-pulse" cx="0" cy="0" r="16" fill="#1d352a" opacity="0.5" />
-            <circle class="pin-circle" cx="0" cy="0" r="15" fill="#1d352a" stroke="#ffffff" stroke-width="3" />
-            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">2</text>
-          </g>
-
-          <!-- ピン3：川湯温泉（推し） -->
-          <g class="map-pin" data-id="2" transform="translate(369, 114)">
-            <circle class="pin-pulse" cx="0" cy="0" r="16" fill="#d96b27" opacity="0.5" />
-            <circle class="pin-circle" cx="0" cy="0" r="16" fill="#d96b27" stroke="#ffffff" stroke-width="3" />
-            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">3</text>
-            <rect x="-26" y="-36" width="52" height="17" rx="8" fill="#1d352a" />
-            <text x="0" y="-24" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffd166">★推し</text>
-          </g>
-
-          <!-- ピン4：屈斜路湖（砂湯） -->
-          <g class="map-pin" data-id="3" transform="translate(205, 255)">
-            <circle class="pin-pulse" cx="0" cy="0" r="16" fill="#1d352a" opacity="0.5" />
-            <circle class="pin-circle" cx="0" cy="0" r="15" fill="#1d352a" stroke="#ffffff" stroke-width="3" />
-            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">4</text>
-          </g>
-
-          <!-- コンパス -->
-          <g transform="translate(55, 55)">
-            <circle cx="0" cy="0" r="22" fill="#ffffff" opacity="0.85" stroke="#1d352a" stroke-width="1.5" />
-            <polygon points="0,-16 -5,0 5,0" fill="#d96b27" />
-            <polygon points="0,16 -5,0 5,0" fill="#1d352a" />
-            <text x="0" y="-25" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d352a">N</text>
-          </g>
-        </svg>
+        <div class="map3d-scene" id="teshikaga-map">
+          <div class="map3d" id="map3d">
+            <img src="map.jpg" alt="弟子屈町のジオラマ風イラストマップ（屈斜路湖・硫黄山・川湯温泉・摩周湖）">
+            <svg class="route" viewBox="0 0 1000 558" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M796,300 Q700,250 650,205 Q600,170 575,150 Q520,235 446,285 Q350,335 250,300" />
+            </svg>
+            <button class="map-pin active oshi" data-id="0" style="left:79.6%; top:54.5%;" aria-label="1. 摩周湖">
+              <span class="pin-body"><span class="pin-label">摩周湖</span><span class="pin-head">1</span><span class="pin-stem"></span></span>
+              <span class="pin-shadow"></span>
+            </button>
+            <button class="map-pin" data-id="1" style="left:57.5%; top:27%;" aria-label="2. 硫黄山">
+              <span class="pin-body"><span class="pin-label">硫黄山</span><span class="pin-head">2</span><span class="pin-stem"></span></span>
+              <span class="pin-shadow"></span>
+            </button>
+            <button class="map-pin oshi" data-id="2" style="left:44.6%; top:51.5%;" aria-label="3. 川湯温泉">
+              <span class="pin-body"><span class="pin-label">川湯温泉</span><span class="pin-head">3</span><span class="pin-stem"></span></span>
+              <span class="pin-shadow"></span>
+            </button>
+            <button class="map-pin" data-id="3" style="left:24.8%; top:54.5%;" aria-label="4. 屈斜路湖（砂湯）">
+              <span class="pin-body"><span class="pin-label">屈斜路湖（砂湯）</span><span class="pin-head">4</span><span class="pin-stem"></span></span>
+              <span class="pin-shadow"></span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- スポット詳細パネル -->
@@ -783,6 +865,24 @@
         document.getElementById("teshikaga-map").scrollIntoView({ behavior: "smooth", block: "center" });
       });
     });
+
+
+    // マップを指やマウスの動きに合わせて少し傾ける
+    const scene = document.getElementById("teshikaga-map");
+    const map3d = document.getElementById("map3d");
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      scene.addEventListener("pointermove", (e) => {
+        const r = scene.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        map3d.style.setProperty("--ry", (x * 10).toFixed(2) + "deg");
+        map3d.style.setProperty("--rx", (12 - y * 8).toFixed(2) + "deg");
+      });
+      scene.addEventListener("pointerleave", () => {
+        map3d.style.setProperty("--ry", "0deg");
+        map3d.style.setProperty("--rx", "12deg");
+      });
+    }
 
     // 初期表示（摩周湖）
     selectSpot(0);
