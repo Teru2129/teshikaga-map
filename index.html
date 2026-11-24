@@ -12,6 +12,9 @@
       --forest-mid: #2f5241;
       --earth-orange: #d96b27;
       --lake-blue: #2364aa;
+      --winter-dark: #1b3b5c;
+      --winter-light: #eef6fc;
+      --winter-border: #c5dcf0;
       --sulfur-yellow: #d4a017;
       --text-main: #262927;
       --text-muted: #5c6660;
@@ -97,6 +100,11 @@
       margin: 2.25rem 0 1rem;
       padding-bottom: 0.4rem;
       border-bottom: 3px solid var(--forest-mid);
+    }
+
+    .section-title.winter {
+      color: var(--winter-dark);
+      border-bottom-color: var(--lake-blue);
     }
 
     /* マップ＆詳細パネルのグリッド */
@@ -389,6 +397,66 @@
       color: var(--text-muted);
     }
 
+    /* 冬の楽しみ方コーナー */
+    .winter-section {
+      background: linear-gradient(180deg, var(--winter-light) 0%, #ffffff 100%);
+      border: 1.5px solid var(--winter-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .winter-section .section-title {
+      margin-top: 0;
+    }
+
+    .winter-lead {
+      font-size: 0.92rem;
+      color: var(--winter-dark);
+      margin-bottom: 1.25rem;
+    }
+
+    .winter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .winter-card {
+      background: #ffffff;
+      border: 1px solid var(--winter-border);
+      border-top: 4px solid var(--lake-blue);
+      border-radius: 12px;
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .winter-tag {
+      display: inline-block;
+      background: var(--winter-light);
+      color: var(--lake-blue);
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 0.15rem 0.55rem;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+      align-self: flex-start;
+    }
+
+    .winter-card h3 {
+      font-size: 1.08rem;
+      color: var(--winter-dark);
+      margin-bottom: 0.45rem;
+    }
+
+    .winter-card p {
+      font-size: 0.87rem;
+      color: var(--text-muted);
+    }
+
     footer {
       text-align: center;
       padding: 1.5rem;
@@ -593,6 +661,37 @@
         <p>硫黄山のゴツゴツした岩場や砂湯の湖畔を歩くので、汚れてもOKな靴がベストです。</p>
       </div>
     </div>
+
+    <!-- 冬の楽しみ方コーナー -->
+    <section class="winter-section">
+      <h2 class="section-title winter">❄️ 冬の楽しみ方</h2>
+      <p class="winter-lead">もし冬の修学旅行や、いつか冬にまた弟子屈町を訪れるなら必見！極寒だからこそ出会える幻想的な絶景3選です。</p>
+      <div class="winter-grid">
+        <article class="winter-card">
+          <div>
+            <span class="winter-tag">12月〜3月ごろ</span>
+            <h3>🦢 屈斜路湖のオオハクチョウ</h3>
+            <p>冬は湖全体が凍りつく屈斜路湖ですが、温泉が湧く「砂湯」の周辺だけは凍らず、シベリアから渡ってきた真っ白なオオハクチョウたちが羽を休めています。湯けむりと白鳥のコラボは冬だけの絶景！</p>
+          </div>
+        </article>
+
+        <article class="winter-card">
+          <div>
+            <span class="winter-tag">1月〜2月ごろ</span>
+            <h3>🌲 摩周湖の霧氷（むひょう）</h3>
+            <p>氷点下の朝、霧や水蒸気が木々の枝に凍りついて真っ白な氷の花が咲く「霧氷」。太陽の光に照らされてキラキラ輝く木々と、深い藍色の摩周湖のコントラストは息をのむ美しさです。</p>
+          </div>
+        </article>
+
+        <article class="winter-card">
+          <div>
+            <span class="winter-tag">12月〜3月ごろ</span>
+            <h3>♨️ 川湯温泉の雪見足湯＆湯けむり</h3>
+            <p>キンと冷えた空気の中、真っ白な雪景色を眺めながら入る川湯温泉の足湯は格別！温泉川からモクモクと立ち上る湯けむりと、運が良ければ見られるダイヤモンドダストも冬の醍醐味です。</p>
+          </div>
+        </article>
+      </div>
+    </section>
   </main>
 
   <footer>
