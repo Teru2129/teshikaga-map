@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>弟子屈町 大自然アドベンチャーMAP｜修学旅行1日モデルコース</title>
+  <style>
+    :root {
+      --bg-base: #f4f1ea;
+      --bg-card: #ffffff;
+      --forest-dark: #1d352a;
+      --forest-mid: #2f5241;
+      --earth-orange: #d96b27;
+      --lake-blue: #2364aa;
+      --sulfur-yellow: #d4a017;
+      --text-main: #262927;
+      --text-muted: #5c6660;
+      --border-color: #dcd6c8;
+      --shadow: 0 8px 24px rgba(29, 53, 42, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Meiryo", system-ui, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* ヘッダー */
+    header {
+      background: linear-gradient(135deg, var(--forest-dark) 0%, var(--forest-mid) 100%);
+      color: #fff;
+      padding: 2.5rem 1.25rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .badge {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: bold;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+    }
+
+    .badge.accent {
+      background: var(--earth-orange);
+      border-color: var(--earth-orange);
+    }
+
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.5rem);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      color: #dce7e1;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* メインコンテナ */
+    main {
+      max-width: 1080px;
+      margin: -1.5rem auto 3rem;
+      padding: 0 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.35rem;
+      color: var(--forest-dark);
+      margin: 2.25rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 3px solid var(--forest-mid);
+    }
+
+    /* マップ＆詳細パネルのグリッド */
+    .map-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+
+    @media (max-width: 820px) {
+      .map-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* SVGマップエリア */
+    .map-wrapper {
+      padding: 1rem;
+      background: #e9efe6;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .map-hint {
+      font-size: 0.82rem;
+      color: var(--forest-mid);
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    svg#teshikaga-map {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 12px;
+      background: #dce8d5;
+      border: 2px solid #c5d6bc;
+    }
+
+    /* SVGピン操作 */
+    .map-pin {
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .map-pin:hover .pin-circle {
+      stroke-width: 4;
+    }
+
+    .map-pin.active .pin-pulse {
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0% { r: 16; opacity: 0.8; }
+      100% { r: 30; opacity: 0; }
+    }
+
+    /* スポット詳細パネル */
+    .detail-panel {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .spot-num {
+      background: var(--forest-dark);
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .oshi-tag {
+      background: var(--earth-orange);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    .detail-title {
+      font-size: 1.45rem;
+      color: var(--forest-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .detail-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+
+    .detail-desc {
+      font-size: 0.95rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .tip-box {
+      background: #fdf6ec;
+      border-left: 4px solid var(--earth-orange);
+      padding: 0.85rem 1rem;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .tip-box strong {
+      color: var(--earth-orange);
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+
+    .spot-nav {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .spot-btn {
+      flex: 1;
+      min-width: 110px;
+      padding: 0.5rem 0.6rem;
+      border: 1.5px solid var(--border-color);
+      background: #fff;
+      color: var(--forest-dark);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .spot-btn:hover {
+      border-color: var(--forest-mid);
+      background: #f0f5f2;
+    }
+
+    .spot-btn.active {
+      background: var(--forest-dark);
+      color: #fff;
+      border-color: var(--forest-dark);
+    }
+
+    /* モデルコース タイムライン */
+    .timeline {
+      position: relative;
+      padding-left: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 10px;
+      bottom: 10px;
+      width: 4px;
+      background: var(--forest-mid);
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      position: relative;
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .timeline-item:hover {
+      transform: translateX(4px);
+      border-color: var(--forest-mid);
+    }
+
+    .timeline-item.active {
+      border-color: var(--earth-orange);
+      box-shadow: 0 4px 16px rgba(217, 107, 39, 0.18);
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -1.75rem;
+      top: 1.25rem;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--bg-base);
+      border: 4px solid var(--forest-dark);
+    }
+
+    .timeline-item.active::before {
+      border-color: var(--earth-orange);
+      background: var(--earth-orange);
+    }
+
+    .time-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.35rem;
+    }
+
+    .time-badge {
+      background: var(--forest-dark);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: bold;
+      padding: 0.15rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    .bus-move {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: #eeeae0;
+      padding: 0.15rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .timeline-item h3 {
+      font-size: 1.1rem;
+      color: var(--forest-dark);
+      margin-bottom: 0.25rem;
+    }
+
+    .timeline-item p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* 持ち物・アドバイス */
+    .advice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .advice-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+    }
+
+    .advice-card h4 {
+      color: var(--forest-dark);
+      margin-bottom: 0.35rem;
+      font-size: 1rem;
+    }
+
+    .advice-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge-row">
+      <span class="badge accent">修学旅行 1日モデルコース</span>
+      <span class="badge">貸切バス移動</span>
+      <span class="badge">北海道・弟子屈町</span>
+    </div>
+    <h1>TESHIKAGA ADVENTURE MAP</h1>
+    <p>カルデラの絶景・噴煙上がる活火山・癒やしの足湯をめぐる、大自然1日制覇ガイド！</p>
+  </header>
+
+  <main>
+    <!-- マップ＆詳細セクション -->
+    <div class="map-grid">
+      <!-- イラスト風SVGマップ -->
+      <div class="card map-wrapper">
+        <div class="map-hint">
+          <span>📍 マップのピンをタップして詳細をチェック！</span>
+          <span>🚌 点線＝バスルート</span>
+        </div>
+
+        <svg id="teshikaga-map" viewBox="0 0 600 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="弟子屈町 観光イラストマップ">
+          <!-- 背景の地形・森 -->
+          <path d="M0,0 H600 V420 H0 Z" fill="#dce8d5" />
+          <!-- 等高線風の丘 -->
+          <path d="M-20,340 Q150,270 300,330 T620,310 V420 H-20 Z" fill="#cedfc4" />
+          <path d="M360,20 Q470,0 590,60 T620,250 Q500,260 420,210 Z" fill="#c5d9ba" />
+
+          <!-- 木のイラスト（装飾） -->
+          <g fill="#5b8266" opacity="0.75">
+            <polygon points="70,90 60,115 80,115" />
+            <polygon points="90,105 82,125 98,125" />
+            <polygon points="270,320 260,345 280,345" />
+            <polygon points="290,335 282,355 298,355" />
+            <polygon points="530,310 520,335 540,335" />
+            <polygon points="550,295 540,320 560,320" />
+            <polygon points="410,60 402,80 418,80" />
+          </g>
+
+          <!-- 屈斜路湖（西側・大きなカルデラ湖） -->
+          <path d="M75,180 C65,130 130,110 185,135 C225,155 230,220 205,265 C180,305 110,300 85,255 C70,230 80,205 75,180 Z" fill="#5da9e9" stroke="#3b82c4" stroke-width="3" />
+          <!-- 中島 -->
+          <ellipse cx="148" cy="205" rx="22" ry="15" fill="#7aa67e" />
+          <text x="148" y="242" text-anchor="middle" font-size="13" font-weight="bold" fill="#184e77">屈斜路湖</text>
+
+          <!-- 摩周湖（東側・深いブルー） -->
+          <path d="M445,145 C460,105 525,105 545,145 C560,180 545,235 505,245 C465,255 435,215 445,145 Z" fill="#1d4e89" stroke="#13315c" stroke-width="3" />
+          <!-- カムイシュ島 -->
+          <circle cx="502" cy="178" r="5" fill="#8fb392" />
+          <text x="498" y="210" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">摩周湖</text>
+
+          <!-- 硫黄山（中央やや北・岩山と噴煙） -->
+          <polygon points="265,200 305,130 345,200" fill="#a89f91" stroke="#7d7468" stroke-width="2" />
+          <polygon points="292,153 305,130 318,153 308,148 302,154" fill="#e6c229" />
+          <!-- 噴煙 -->
+          <g fill="#ffffff" opacity="0.85">
+            <circle cx="308" cy="118" r="7" />
+            <circle cx="318" cy="108" r="10" />
+            <circle cx="332" cy="100" r="12" />
+          </g>
+          <text x="305" y="218" text-anchor="middle" font-size="12" font-weight="bold" fill="#4a443c">硫黄山</text>
+
+          <!-- 川湯温泉（硫黄山の北東・温泉マーク風） -->
+          <rect x="335" y="72" width="68" height="32" rx="10" fill="#f7e3c6" stroke="#d96b27" stroke-width="2" />
+          <text x="369" y="93" text-anchor="middle" font-size="12" font-weight="bold" fill="#b34d12">♨ 川湯温泉</text>
+
+          <!-- 貸切バスルート（点線） -->
+          <path d="M465,235 Q390,260 325,195 T360,104 Q270,95 205,255"
+                fill="none" stroke="#d96b27" stroke-width="4" stroke-dasharray="8,6" stroke-linecap="round" />
+
+          <!-- ピン1：摩周湖（推し） -->
+          <g class="map-pin active" data-id="0" transform="translate(465, 235)">
+            <circle class="pin-pulse" cx="0" cy="0" r="16" fill="#d96b27" opacity="0.5" />
+            <circle class="pin-circle" cx="0" cy="0" r="16" fill="#d96b27" stroke="#ffffff" stroke-width="3" />
+            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">1</text>
+            <rect x="-26" y="-36" width="52" height="17" rx="8" fill="#1d352a" />
+            <text x="0" y="-24" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffd166">★推し</text>
+          </g>
+
+          <!-- ピン2：硫黄山 -->
+          <g class="map-pin" data-id="1" transform="translate(320, 188)">
+            <circle class="pin-pulse" cx="0" cy="0" r="16" fill="#1d352a" opacity="0.5" />
+            <circle class="pin-circle" cx="0" cy="0" r="15" fill="#1d352a" stroke="#ffffff" stroke-width="3" />
+            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">2</text>
+          </g>
+
+          <!-- ピン3：川湯温泉（推し） -->
+          <g class="map-pin" data-id="2" transform="translate(369, 114)">
+            <circle class="pin-pulse" cx="0" cy="0" r="16" fill="#d96b27" opacity="0.5" />
+            <circle class="pin-circle" cx="0" cy="0" r="16" fill="#d96b27" stroke="#ffffff" stroke-width="3" />
+            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">3</text>
+            <rect x="-26" y="-36" width="52" height="17" rx="8" fill="#1d352a" />
+            <text x="0" y="-24" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffd166">★推し</text>
+          </g>
+
+          <!-- ピン4：屈斜路湖（砂湯） -->
+          <g class="map-pin" data-id="3" transform="translate(205, 255)">
+            <circle class="pin-pulse" cx="0" cy="0" r="16" fill="#1d352a" opacity="0.5" />
+            <circle class="pin-circle" cx="0" cy="0" r="15" fill="#1d352a" stroke="#ffffff" stroke-width="3" />
+            <text x="0" y="5" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">4</text>
+          </g>
+
+          <!-- コンパス -->
+          <g transform="translate(55, 55)">
+            <circle cx="0" cy="0" r="22" fill="#ffffff" opacity="0.85" stroke="#1d352a" stroke-width="1.5" />
+            <polygon points="0,-16 -5,0 5,0" fill="#d96b27" />
+            <polygon points="0,16 -5,0 5,0" fill="#1d352a" />
+            <text x="0" y="-25" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d352a">N</text>
+          </g>
+        </svg>
+      </div>
+
+      <!-- スポット詳細パネル -->
+      <div class="card detail-panel" id="detail-panel">
+        <div>
+          <div class="detail-header">
+            <span class="spot-num" id="d-num">1</span>
+            <span class="oshi-tag" id="d-oshi">★ 推しスポット</span>
+          </div>
+          <h2 class="detail-title" id="d-title">摩周湖（第一展望台）</h2>
+          <p class="detail-sub" id="d-sub">滞在目安：60分 ｜ 神秘の「摩周ブルー」</p>
+          <p class="detail-desc" id="d-desc"></p>
+          <div class="tip-box">
+            <strong>🎒 高校生向けポイント</strong>
+            <span id="d-tip"></span>
+          </div>
+        </div>
+
+        <div class="spot-nav" id="spot-nav">
+          <button class="spot-btn active" data-id="0">1. 摩周湖</button>
+          <button class="spot-btn" data-id="1">2. 硫黄山</button>
+          <button class="spot-btn" data-id="2">3. 川湯温泉</button>
+          <button class="spot-btn" data-id="3">4. 屈斜路湖</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 貸切バス 1日モデルコース -->
+    <h2 class="section-title">🚌 貸切バスで回る 1日モデルコース</h2>
+    <div class="timeline" id="timeline">
+      <div class="timeline-item active" data-id="0">
+        <div class="time-row">
+          <span class="time-badge">09:30 - 10:30</span>
+          <span class="oshi-tag">★ 推し：絶景</span>
+        </div>
+        <h3>① 摩周湖（第一展望台）</h3>
+        <p>世界有数の透明度を誇るカルデラ湖。展望テラスから「摩周ブルー」を背景にクラス全員で記念撮影！</p>
+      </div>
+
+      <div class="timeline-item" data-id="1">
+        <div class="time-row">
+          <span class="time-badge">11:00 - 11:45</span>
+          <span class="bus-move">🚌 バスで約25分</span>
+        </div>
+        <h3>② 硫黄山（アトサヌプリ）</h3>
+        <p>ゴウゴウと音を立てて噴煙が上がる活火山。目の前まで近づける大迫力の地球体験と、名物「温泉蒸し卵」が人気。</p>
+      </div>
+
+      <div class="timeline-item" data-id="2">
+        <div class="time-row">
+          <span class="time-badge">12:00 - 13:45</span>
+          <span class="bus-move">🚌 バスで約10分</span>
+          <span class="oshi-tag">★ 推し：足湯</span>
+        </div>
+        <h3>③ 川湯温泉（足湯＆ランチ散策）</h3>
+        <p>強酸性の名湯を気軽に体験できる無料足湯でほっと一息。温泉街でのランチやスイーツ食べ歩きも楽しめます。</p>
+      </div>
+
+      <div class="timeline-item" data-id="3">
+        <div class="time-row">
+          <span class="time-badge">14:15 - 15:15</span>
+          <span class="bus-move">🚌 バスで約20分</span>
+        </div>
+        <h3>④ 屈斜路湖（砂湯）</h3>
+        <p>日本最大のカルデラ湖。湖畔の砂を掘ると温かい温泉が湧き出す「マイ足湯」づくりで旅の締めくくり！</p>
+      </div>
+    </div>
+
+    <!-- 持ち物＆アドバイス -->
+    <h2 class="section-title">🧭 アドベンチャーを満喫する持ち物</h2>
+    <div class="advice-grid">
+      <div class="advice-card">
+        <h4>🧣 フェイスタオル</h4>
+        <p>川湯温泉の足湯や屈斜路湖の砂湯で大活躍！濡れたタオルを入れるビニール袋もあると完璧です。</p>
+      </div>
+      <div class="advice-card">
+        <h4>🧥 羽織れる上着</h4>
+        <p>摩周湖の展望台は風が強い日が多いです。夏でも薄手のウインドブレーカーがあると安心。</p>
+      </div>
+      <div class="advice-card">
+        <h4>👟 歩きやすいスニーカー</h4>
+        <p>硫黄山のゴツゴツした岩場や砂湯の湖畔を歩くので、汚れてもOKな靴がベストです。</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    弟子屈町 修学旅行モデルコースMAP（SVGイラスト版）
+  </footer>
+
+  <script>
+    const spots = [
+      {
+        num: 1,
+        oshi: true,
+        oshiText: "★ 推し：摩周ブルーの絶景",
+        title: "摩周湖（第一展望台）",
+        sub: "09:30〜10:30（滞在60分）｜ 霧と青の神秘の湖",
+        desc: "不純物がほとんど含まれないため、晴れた日は吸い込まれるような深い青色「摩周ブルー」に輝きます。湖面まで降りられないからこそ守られた、手つかずの大自然を一望できる絶景スポットです。",
+        tip: "展望テラス「摩周湖カムイテラス」はSNS映え抜群！霧で真っ白な日でも幻想的なので、タイミングを見てシャッターを切ろう。"
+      },
+      {
+        num: 2,
+        oshi: false,
+        oshiText: "",
+        title: "硫黄山（アトサヌプリ）",
+        sub: "11:00〜11:45（滞在45分）｜ 地球の鼓動を感じる活火山",
+        desc: "アイヌ語で「裸の山」を意味する活火山。黄色い硫黄の結晶とモクモクと立ち上る噴煙を間近で見学でき、まるで別惑星に来たような冒険感が味わえます。",
+        tip: "レストハウスで買える「温泉蒸し卵」は必食！噴煙の匂いが少し強いので、風向きを見ながら歩くのがコツ。"
+      },
+      {
+        num: 3,
+        oshi: true,
+        oshiText: "★ 推し：無料で楽しむ極上足湯",
+        title: "川湯温泉（足湯＆温泉街）",
+        sub: "12:00〜13:45（滞在105分）｜ 源泉かけ流しの名湯",
+        desc: "硫黄山から湧き出る全国屈指の強酸性温泉。温泉街の中心にある足湯は誰でも無料で利用でき、バス移動や散策で疲れた足をじんわり癒やしてくれます。",
+        tip: "足湯のあとに靴下を履けるよう、タオルを忘れずに！温泉街のカフェやご当地グルメでの班別ランチもおすすめ。"
+      },
+      {
+        num: 4,
+        oshi: false,
+        oshiText: "",
+        title: "屈斜路湖（砂湯）",
+        sub: "14:15〜15:15（滞在60分）｜ 掘れば温泉が湧く不思議な湖畔",
+        desc: "日本最大級のカルデラ湖。湖畔の砂浜を少し掘るだけで温かい温泉が湧き出す「砂湯」があり、友達と協力して自分たちだけの足湯を作って遊べます。",
+        tip: "波打ち際で砂を掘ると温度調節しやすいよ！冬〜春先は野生のオオハクチョウに出会えることも。"
+      }
+    ];
+
+    const dNum = document.getElementById("d-num");
+    const dOshi = document.getElementById("d-oshi");
+    const dTitle = document.getElementById("d-title");
+    const dSub = document.getElementById("d-sub");
+    const dDesc = document.getElementById("d-desc");
+    const dTip = document.getElementById("d-tip");
+
+    const pins = document.querySelectorAll(".map-pin");
+    const navBtns = document.querySelectorAll(".spot-btn");
+    const timelineItems = document.querySelectorAll(".timeline-item");
+
+    function selectSpot(index) {
+      const spot = spots[index];
+      dNum.textContent = spot.num;
+      dTitle.textContent = spot.title;
+      dSub.textContent = spot.sub;
+      dDesc.textContent = spot.desc;
+      dTip.textContent = spot.tip;
+
+      if (spot.oshi) {
+        dOshi.style.display = "inline-block";
+        dOshi.textContent = spot.oshiText;
+      } else {
+        dOshi.style.display = "none";
+      }
+
+      pins.forEach((pin, i) => pin.classList.toggle("active", i === index));
+      navBtns.forEach((btn, i) => btn.classList.toggle("active", i === index));
+      timelineItems.forEach((item, i) => item.classList.toggle("active", i === index));
+    }
+
+    pins.forEach(pin => {
+      pin.addEventListener("click", () => selectSpot(Number(pin.dataset.id)));
+    });
+
+    navBtns.forEach(btn => {
+      btn.addEventListener("click", () => selectSpot(Number(btn.dataset.id)));
+    });
+
+    timelineItems.forEach(item => {
+      item.addEventListener("click", () => {
+        selectSpot(Number(item.dataset.id));
+        document.getElementById("teshikaga-map").scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
+
+    // 初期表示（摩周湖）
+    selectSpot(0);
+  </script>
+</body>
+</html>
